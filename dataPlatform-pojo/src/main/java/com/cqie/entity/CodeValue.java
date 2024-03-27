@@ -40,12 +40,5 @@ public class CodeValue implements Serializable {
     @ApiModelProperty("码表编号")
     private String codeTableNumber;
 
-    @ApiModelProperty("0未删除，其他已删除")
-    private Integer deleteFlag;
-
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
-
 
 }
