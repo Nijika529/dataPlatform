@@ -220,8 +220,6 @@ public class CodeTableServiceImpl<T,K> extends ServiceImpl<CodeTableMapper, Code
                     .codeValueName(dto.getCodeValueName())
                     .codeValueDesc(dto.getCodeValueDesc())
                     .codeTableNumber(codeTableCount)
-                    .createTime(LocalDateTime.now())
-                    .updateTime(LocalDateTime.now())
                     .codeValueValue(dto.getCodeValueValue())
                     .build();
             codeValueMapper.insert(codeValue);

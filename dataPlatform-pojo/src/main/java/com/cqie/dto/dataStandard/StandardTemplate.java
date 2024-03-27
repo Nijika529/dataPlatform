@@ -36,18 +36,18 @@ public class StandardTemplate implements Serializable {
     private String dataStandardExplain;
 
     @Excel(name = "是否可为空")
-    private Integer dataStandardIsBlank;
+    private String dataStandardIsBlank;
 
     @Excel(name = "来源机构")
     @NotNull(message = "来源机构编码不能为空")
-    private Integer dataStandardSourceOrganization;
+    private String dataStandardSourceOrganization;
 
     @Excel(name = "默认值")
     private String dataStandardDefaultValue;
 
     @Excel(name = "数据类型")
     @NotNull(message = "数据类型不能为空")
-    private Integer dataStandardType;
+    private String dataStandardType;
 
     @Excel(name = "数据长度")
     @Min(value = 0, message = "数据长度只能为正整数")
@@ -65,6 +65,5 @@ public class StandardTemplate implements Serializable {
 
     @Excel(name = "引用码表编号")
     private String dataStandardEnumerationRange;
-
 
 }
