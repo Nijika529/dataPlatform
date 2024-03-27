@@ -1,0 +1,5 @@
+utils:
+    generator:
+      url: jdbc:mysql://localhost:3306/data_factory?serverTimezone=UTC
+      username: root
+      password: 123456

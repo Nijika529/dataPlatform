@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqie.mapper.CodeTableMapper">
+
+    <select id="selectCodeTablePage" resultType="com.cqie.vo.codetablevo.CodeTablePageVo">
+        select code_table_number,code_table_name,code_table_desc,update_time,code_table_state,id
+        from code_table
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="getByIdTable" resultType="com.cqie.vo.codetablevo.CodeTableValueVo">
+        select id,code_table_name,code_table_desc,code_table_number
+        from code_table
+        where code_table.id = ${id}
+    </select>
+
+    <select id="getById" resultType="com.cqie.vo.codetablevo.CodeValueValueVo">
+        select id,code_value_name,code_value_value,code_value_desc,code_value_number
+        from code_table
+        left join code_value
+        on code_table.code_table_number = code_value.code_table_number
+        where code_table.id = ${id}
+    </select>
+
+    <select id="selectTableList" resultType="com.cqie.vo.codetablevo.CodeTableValueVo">
+        select id,code_table_name,code_table_desc
+        from code_table
+    </select>
+
+    <select id="selectDataStandard" resultType="com.cqie.vo.codetablevo.CodeTableValueVo">
+        select code_table_number,code_table_name,code_table_desc,id
+        from code_table
+        where code_table.code_table_number = #{codeTableNumber}
+    </select>
+</mapper>
