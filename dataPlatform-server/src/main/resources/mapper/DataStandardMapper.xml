@@ -7,4 +7,52 @@
         from data_standard
     </select>
 
+    <insert id="insertForeach">
+        insert into data_standard (data_standard_code,
+                                   data_standard_cn_name,
+                                   data_standard_en_name,
+                                   data_standard_explain,
+                                   data_standard_source_organization,
+                                   data_standard_type,
+                                   data_standard_length,
+                                   data_standard_accuracy,
+                                   data_standard_default_value,
+                                   data_standard_value_max,
+                                   data_standard_value_min,
+                                   data_standard_enumeration_range,
+                                   data_standard_state,
+                                   create_time,
+                                   update_time)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.dataStandardCode}, #{item.dataStandardCnName}, #{item.dataStandardEnName}, #{item.dataStandardExplain}, #{item.dataStandardSourceOrganization},
+            #{item.dataStandardType}, #{item.dataStandardLength}, #{item.dataStandardAccuracy}, #{item.dataStandardDefaultValue}, #{item.dataStandardValueMax},
+            #{item.dataStandardValueMin}, #{item.dataStandardEnumerationRange}, #{item.dataStandardState}, #{item.createTime}, #{item.updateTime})
+        </foreach>
+    </insert>
+
+    <update id="updateBatch">
+        update data_standard set data_standard_state = #{dataStandardState}
+        where data_standard_code in
+            (
+                <foreach collection="dataStandardCode" item="item" index="index" separator=",">
+                    #{item}
+                </foreach>
+            )
+    </update>
+
+    <select id="selectPublish" resultType="java.lang.String">
+        select data_standard_code
+        from data_standard
+        where data_standard_code in
+        (
+            <foreach collection="dataStandardCode" item="item" separator="," index="index">
+                #{item}
+            </foreach>
+        )
+        and
+        data_standard_state = 1
+        and
+        delete_flag = 0
+    </select>
 </mapper>

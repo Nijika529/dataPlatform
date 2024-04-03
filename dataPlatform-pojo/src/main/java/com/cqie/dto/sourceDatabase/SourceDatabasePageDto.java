@@ -27,10 +27,9 @@ public class SourceDatabasePageDto implements Serializable {
     private Integer pageSize = 10;
 
     @ApiModelProperty("数据库数据源名称")
-    private String name;
+    private String databaseSourceName;
 
     @ApiModelProperty("数据库数据源状态")
-    private Integer state;
-
+    private Integer databaseSourceState;
 
 }

@@ -2,6 +2,7 @@ package com.cqie.service;
 
 import com.cqie.dto.dataStandard.StandardAddDto;
 import com.cqie.dto.dataStandard.StandardGetAllDto;
+import com.cqie.dto.dataStandard.StandardUpdateDto;
 import com.cqie.entity.DataStandard;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cqie.util.R.Result;
@@ -28,4 +29,6 @@ public interface DataStandardService extends IService<DataStandard> {
     Result<Object> updateState(List<String> dataStandardCode, Integer dataStandardState);
 
     Result<Object> addTemplate(MultipartFile file);
+
+    Result<Object> updateStandard(StandardUpdateDto standardUpdateDto);
 }

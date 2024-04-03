@@ -40,5 +40,4 @@ public class CodeValue implements Serializable {
     @ApiModelProperty("码表编号")
     private String codeTableNumber;
 
-
 }

@@ -1,6 +1,7 @@
 package com.cqie.dto.dataStandard;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import com.cqie.entity.DataStandard;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @program: dataPlatform
@@ -65,5 +67,26 @@ public class StandardTemplate implements Serializable {
 
     @Excel(name = "引用码表编号")
     private String dataStandardEnumerationRange;
+
+    @Override
+    public boolean equals(Object obj) {
+        //判断是否一致
+        if (this == obj) {
+            return true;
+        }
+        //判断类型是否一致
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        //比较
+        StandardTemplate dataStandard = (StandardTemplate) obj;
+        return Objects.equals(dataStandardCnName, dataStandard.getDataStandardCnName()) ||
+                Objects.equals(dataStandardEnName, dataStandard.getDataStandardEnName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dataStandardCnName, dataStandardEnName);
+    }
 
 }

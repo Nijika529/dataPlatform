@@ -6,6 +6,7 @@ import com.cqie.entity.CodeValue;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cqie.vo.codetablevo.CodeValueValueVo;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -23,5 +24,8 @@ public interface CodeValueMapper extends BaseMapper<CodeValue> {
 
     List<CodeValueValueVo> selectValueList(@Param(Constants.WRAPPER)QueryWrapper<CodeValue> queryWrapper);
 
+    //查询在码值表中对应的数据类型
 
+    @Select("select code_value_value from code_value where code_table_number = #{codeTableNumber}")
+    List<String> selectType(String codeTableNumber);
 }

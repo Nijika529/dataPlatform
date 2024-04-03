@@ -21,6 +21,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>com.cqie</groupId>
+            <artifactId>dataPlatform-pojo</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.5.1</version>

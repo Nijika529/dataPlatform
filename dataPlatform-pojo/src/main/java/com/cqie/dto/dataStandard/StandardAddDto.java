@@ -35,11 +35,11 @@ public class StandardAddDto implements Serializable {
 
     @ApiModelProperty("来源机构编码")
     @NotNull(message = "来源机构编码不能为空")
-    private Integer dataStandardSourceOrganization;
+    private String dataStandardSourceOrganization;
 
     @ApiModelProperty("数据类型：类型字典项编码")
     @NotNull(message = "数据类型不能为空")
-    private Integer dataStandardType;
+    private String dataStandardType;
 
     @ApiModelProperty("数据长度")
     @Min(value = 0, message = "数据长度只能为正整数")
@@ -63,7 +63,7 @@ public class StandardAddDto implements Serializable {
 
     @ApiModelProperty("是否可为空：0不可为空，1可为空")
     @NotNull(message = "是否可为空不能为空")
-    private Integer dataStandardIsBlank;
+    private String dataStandardIsBlank;
 
 
 //    @AssertTrue(message = "数据类型必须为String, Int, Enum, Float")

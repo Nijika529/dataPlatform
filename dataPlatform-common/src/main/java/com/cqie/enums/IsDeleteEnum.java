@@ -7,7 +7,7 @@ package com.cqie.enums;
  * @create: 2024-03-26 16:52
  **/
 
-public enum IsDelete {
+public enum IsDeleteEnum {
     NOT_DELETE,
     DELETE
 }

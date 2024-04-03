@@ -29,6 +29,14 @@ public class Result<T> {
         result.setMessage(message);
         return result;
     }
+
+    public static <T> Result<T> failed(String message) {
+        Result<T> result = build(null);
+        result.setCode(0);
+        result.setMessage(message);
+        return result;
+    }
+
     public static <T> Result<T> failed(T data, ResultCodeEnum resultCodeEnum) {
         Result<T> result = build(data);
         result.setCode(resultCodeEnum.getCode());
@@ -47,7 +55,7 @@ public class Result<T> {
         return this;
     }
     public Result<T> code(Integer code){
-        this.setCode(code);
+        this.setCode(0);
         return this;
     }
 

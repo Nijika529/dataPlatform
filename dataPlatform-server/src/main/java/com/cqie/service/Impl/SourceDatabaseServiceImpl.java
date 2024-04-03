@@ -16,6 +16,7 @@ import com.cqie.util.R.Result;
 import com.cqie.vo.sourcedatabasevo.SourceDatabasePageVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.sql.Connection;
@@ -102,8 +103,8 @@ public class SourceDatabaseServiceImpl extends ServiceImpl<SourceDatabaseMapper,
     public Result<Object> pageByDatabase(SourceDatabasePageDto sourceDatabasePageDto) {
         Page<SourceDatabasePageVO> page =new Page<>(sourceDatabasePageDto.getPageNumber(), sourceDatabasePageDto.getPageSize());
         QueryWrapper<SourceDatabase> wrapper = new QueryWrapper<>();
-        wrapper.lambda().like(StringUtils.isNotEmpty(sourceDatabasePageDto.getName()), SourceDatabase::getDatabaseSourceName, sourceDatabasePageDto.getName())
-                .eq(sourceDatabasePageDto.getState() != null, SourceDatabase::getDatabaseSourceState, sourceDatabasePageDto.getState());
+        wrapper.lambda().like(StringUtils.isNotEmpty(sourceDatabasePageDto.getDatabaseSourceName()), SourceDatabase::getDatabaseSourceName, sourceDatabasePageDto.getDatabaseSourceName())
+                .eq(sourceDatabasePageDto.getDatabaseSourceState() != null, SourceDatabase::getDatabaseSourceState, sourceDatabasePageDto.getDatabaseSourceState());
         sourceDatabaseMapper.page(page, wrapper);
         page.getRecords().forEach(records -> {
             try {
@@ -197,6 +198,7 @@ public class SourceDatabaseServiceImpl extends ServiceImpl<SourceDatabaseMapper,
             }
         }catch (Exception e) {
             log.info("error:{}", e.getMessage());
+            return Result.failed(null,0, e.getMessage());
         }
         return addLink(sourceDatabaseLinkDto);
     }
