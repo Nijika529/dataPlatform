@@ -2,6 +2,7 @@ package com.cqie.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -142,6 +143,9 @@ public class DataStandardServiceImpl extends ServiceImpl<DataStandardMapper, Dat
         switch (type) {
             //取值范围最小值与取值范围最大值对于标准的数据类型为Int时只能取整数
             case "Int":
+                if (ObjectUtils.isEmpty(standardAddDto.getDataStandardValueMin()) && ObjectUtils.isEmpty(standardAddDto.getDataStandardValueMax())) {
+                    return Result.failed(null, 0, "取值范围最小值与取值范围最大值不能为空");
+                }
                 if (!standardAddDto.getDataStandardValueMin().matches(intPattern)
                         && !standardAddDto.getDataStandardValueMax().matches(floatPattern)) {
                     return Result.failed(null, 0, "取值范围最小值与取值范围最大值对于标准的数据类型为Int时只能取整数");
@@ -149,6 +153,9 @@ public class DataStandardServiceImpl extends ServiceImpl<DataStandardMapper, Dat
                 break;
             //对于标准的数据类型为Float时可以填整数与实数
             case "Float":
+                if (ObjectUtils.isEmpty(standardAddDto.getDataStandardValueMin()) && ObjectUtils.isEmpty(standardAddDto.getDataStandardValueMax())) {
+                    return Result.failed(null, 0, "取值范围最小值与取值范围最大值不能为空");
+                }
                 if (!standardAddDto.getDataStandardValueMin().matches(floatPattern)
                         && !standardAddDto.getDataStandardValueMax().matches(floatPattern)) {
                     return Result.failed(null, 0, "对于标准的数据类型为Float时可以填整数与实数");
@@ -187,19 +194,21 @@ public class DataStandardServiceImpl extends ServiceImpl<DataStandardMapper, Dat
             return Result.failed(null, 0, "此数据类型不存在");
         }
 
-        //判断枚举类型在数据库中是否存在
-        LambdaQueryWrapper<CodeTable> codeTableLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        codeTableLambdaQueryWrapper.eq(CodeTable::getCodeTableNumber, standardAddDto.getDataStandardEnumerationRange());
-        CodeTable codeTable = codeTableMapper.selectOne(codeTableLambdaQueryWrapper);
-        if (codeTable == null) {
-            return Result.failed(null, 0, "此枚举类型不存在");
-        }
+        //判断枚举类型
+        if (ObjectUtils.isNotEmpty(standardAddDto.getDataStandardEnumerationRange())) {
+            //判断枚举类型在数据库中是否存在
+            LambdaQueryWrapper<CodeTable> codeTableLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            codeTableLambdaQueryWrapper.eq(CodeTable::getCodeTableNumber, standardAddDto.getDataStandardEnumerationRange());
+            CodeTable codeTable = codeTableMapper.selectOne(codeTableLambdaQueryWrapper);
+            if (ObjectUtils.isEmpty(codeTable)) {
+                return Result.failed(null, 0, "此枚举类型不存在");
+            }
 
-        //枚举类型必须在发布状态才能引用
-        if (!codeTable.getCodeTableState().equals(IsPublishEnum.Published.ordinal())) {
-            return Result.failed(null, 0, "只有发布的枚举类型才能使用");
+            //枚举类型必须在发布状态才能引用
+            if (!codeTable.getCodeTableState().equals(IsPublishEnum.Published.ordinal())) {
+                return Result.failed(null, 0, "只有发布的枚举类型才能使用");
+            }
         }
-
 
         //判断不同类型其字段是否为空
             //判断类型是否为空
@@ -220,8 +229,6 @@ public class DataStandardServiceImpl extends ServiceImpl<DataStandardMapper, Dat
         organizationQueryWrapper.eq(CodeValue::getCodeValueName, standardAddDto.getDataStandardSourceOrganization());
         Integer dataStandardSourceOrganization = codeValueMapper.selectOne(organizationQueryWrapper).getCodeValueNumber();
 
-
-
         //存入数据
         DataStandard dataStandard = new DataStandard();
         BeanUtils.copyProperties(standardAddDto, dataStandard);
@@ -229,7 +236,8 @@ public class DataStandardServiceImpl extends ServiceImpl<DataStandardMapper, Dat
         dataStandard.setDataStandardSourceOrganization(dataStandardSourceOrganization);
         dataStandard.setCreateTime(LocalDateTime.now());
         dataStandard.setUpdateTime(LocalDateTime.now());
-        dataStandard.setDataStandardCode("BZ" + String.format("%05d", standardNumber()));
+        Integer code = standardNumber();
+        dataStandard.setDataStandardCode("BZ" + String.format("%05d", ++code));
         //获取是否为空
         //获取是否可以为空插入
         if (standardAddDto.getDataStandardIsBlank().equals(IsBlankConstant.NOT_CAN_EMPTY_CN)) {
@@ -252,12 +260,13 @@ public class DataStandardServiceImpl extends ServiceImpl<DataStandardMapper, Dat
         queryWrapper.lambda()
                 .eq(standardGetAllDto.getDataStandardSourceOrganization() != null, DataStandard::getDataStandardSourceOrganization, standardGetAllDto.getDataStandardSourceOrganization())
                 .eq(standardGetAllDto.getDataStandardState() != null, DataStandard::getDataStandardState, standardGetAllDto.getDataStandardState())
+                .eq(DataStandard::getDeleteFlag, IsDeleteEnum.NOT_DELETE.ordinal())
                 .like(StringUtils.isNotEmpty(standardGetAllDto.getDataStandardCode()), DataStandard::getDataStandardCode, standardGetAllDto.getDataStandardCode())
                 .like(StringUtils.isNotEmpty(standardGetAllDto.getDataStandardCnName()), DataStandard::getDataStandardCnName, standardGetAllDto.getDataStandardCnName())
                 .like(StringUtils.isNotEmpty(standardGetAllDto.getDataStandardEnName()), DataStandard::getDataStandardEnName, standardGetAllDto.getDataStandardEnName())
-                .eq(DataStandard::getDeleteFlag, IsDeleteEnum.NOT_DELETE.ordinal())
                 .orderByAsc(DataStandard::getDataStandardState)
                 .orderByDesc(DataStandard::getUpdateTime);
+
         dataStandardMapper.page(page, queryWrapper);
         System.out.println(page);
         List<DataStandardPageVO> records = page.getRecords();
@@ -297,13 +306,14 @@ public class DataStandardServiceImpl extends ServiceImpl<DataStandardMapper, Dat
         }
         //判断是否处于未发布状态
         DataStandard dataStandard = lambdaQuery().eq(DataStandard::getDataStandardCode, dataStandardCode).one();
-        if (dataStandard.getDataStandardState() == IsPublishValueEnum.Unpublished.ordinal()) {
+        if (dataStandard.getDataStandardState() != IsPublishValueEnum.Unpublished.ordinal()) {
             return Result.failed(null, 0, "只有未发布的才能进行删除");
         }
         //逻辑删除
-        lambdaUpdate().eq(DataStandard::getDataStandardCode, dataStandardCode)
-                .set(DataStandard::getDeleteFlag, IsDeleteEnum.DELETE.ordinal())
-                .update();
+        LambdaUpdateWrapper<DataStandard> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(DataStandard::getDataStandardCode, dataStandardCode)
+                        .set(DataStandard::getDeleteFlag, IsDeleteEnum.DELETE.ordinal());
+        dataStandardMapper.update(null, lambdaUpdateWrapper);
 
         return Result.success(null);
     }
@@ -323,8 +333,8 @@ public class DataStandardServiceImpl extends ServiceImpl<DataStandardMapper, Dat
 
         //编号在数据库中是否存在
         for (String data : dataStandardCode) {
-            DataStandard standard = lambdaQuery().eq(DataStandard::getDataStandardCode, data).eq(DataStandard::getDeleteFlag, IsEmptyEnum.EMPTY.ordinal()).one();
-            if (standard == null) {
+            DataStandard standard = lambdaQuery().eq(DataStandard::getDataStandardCode, data).eq(DataStandard::getDeleteFlag, IsDeleteEnum.NOT_DELETE.ordinal()).one();
+            if (ObjectUtils.isEmpty(standard)) {
                 return Result.failed(dataStandardCode + "数据表中编号不存在数据库中");
             }
         }
@@ -337,7 +347,7 @@ public class DataStandardServiceImpl extends ServiceImpl<DataStandardMapper, Dat
                 break;
             case IsPublish.DISABLED:
                 List<String> res = dataStandardMapper.selectPublish(dataStandardCode);
-                if (res != null) {
+                if (ObjectUtils.isNotEmpty(res)) {
                     return Result.failed(res + "不能从未发布改为已停用");
                 }
         }
@@ -389,7 +399,7 @@ public class DataStandardServiceImpl extends ServiceImpl<DataStandardMapper, Dat
             LambdaQueryWrapper<CodeTable> codeTableLambdaQueryWrapper = new LambdaQueryWrapper<>();
             codeTableLambdaQueryWrapper.eq(CodeTable::getCodeTableName, data.getDataStandardEnumerationRange()).eq(CodeTable::getDeleteFlag, IsDeleteEnum.NOT_DELETE.ordinal());
             CodeTable codeTable = codeTableMapper.selectOne(codeTableLambdaQueryWrapper);
-            if (codeTable == null) {
+            if (ObjectUtils.isEmpty(codeTable)) {
                 standardTemplates2.add(data);
             }
         });
@@ -474,7 +484,7 @@ public class DataStandardServiceImpl extends ServiceImpl<DataStandardMapper, Dat
                 .eq(DataStandard::getDataStandardEnName, standardUpdateDto.getDataStandardEnName())
                 .ne(DataStandard::getId, standardUpdateDto.getId());
         List<DataStandard> dataStandards = dataStandardMapper.selectList(standardLambdaQueryWrapper);
-        if (dataStandards != null) {
+        if (ObjectUtils.isNotEmpty(dataStandards)) {
             return Result.failed("中文名或英文名不能重复");
         }
 
@@ -483,20 +493,20 @@ public class DataStandardServiceImpl extends ServiceImpl<DataStandardMapper, Dat
         if (!types.contains(standardUpdateDto.getDataStandardType())) {
             return Result.failed(null, 0, "此数据类型不存在");
         }
+        if (ObjectUtils.isNotEmpty(standardUpdateDto.getDataStandardEnumerationRange())) {
+            //判断枚举类型在数据库中是否存在
+            LambdaQueryWrapper<CodeTable> codeTableLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            codeTableLambdaQueryWrapper.eq(CodeTable::getCodeTableNumber, standardUpdateDto.getDataStandardEnumerationRange());
+            CodeTable codeTable = codeTableMapper.selectOne(codeTableLambdaQueryWrapper);
+            if (ObjectUtils.isEmpty(codeTable)) {
+                return Result.failed(null, 0, "此枚举类型不存在");
+            }
 
-        //判断枚举类型在数据库中是否存在
-        LambdaQueryWrapper<CodeTable> codeTableLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        codeTableLambdaQueryWrapper.eq(CodeTable::getCodeTableNumber, standardUpdateDto.getDataStandardEnumerationRange());
-        CodeTable codeTable = codeTableMapper.selectOne(codeTableLambdaQueryWrapper);
-        if (codeTable == null) {
-            return Result.failed(null, 0, "此枚举类型不存在");
+            //枚举类型必须在发布状态才能引用
+            if (!codeTable.getCodeTableState().equals(IsPublishEnum.Published.ordinal())) {
+                return Result.failed(null, 0, "只有发布的枚举类型才能使用");
+            }
         }
-
-        //枚举类型必须在发布状态才能引用
-        if (!codeTable.getCodeTableState().equals(IsPublishEnum.Published.ordinal())) {
-            return Result.failed(null, 0, "只有发布的枚举类型才能使用");
-        }
-
 
         //判断不同类型其字段是否为空
         //判断类型是否为空
@@ -534,9 +544,10 @@ public class DataStandardServiceImpl extends ServiceImpl<DataStandardMapper, Dat
         }else {
             dataStandard.setDataStandardIsBlank(IsBlankConstant.CAN_EMPTY_CODE);
         }
-
-
-        dataStandardMapper.update(dataStandard, null);
+        LambdaUpdateWrapper<DataStandard> lambdaUpdateWrapper =new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(DataStandard::getDataStandardCode, dataStandard.getDataStandardCode())
+                .eq(DataStandard::getDeleteFlag, IsDeleteEnum.NOT_DELETE.ordinal());
+        dataStandardMapper.update(dataStandard, lambdaUpdateWrapper);
 
         return Result.success(null);
     }

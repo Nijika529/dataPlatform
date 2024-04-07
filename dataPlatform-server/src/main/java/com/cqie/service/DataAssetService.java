@@ -1,5 +1,6 @@
 package com.cqie.service;
 
+import com.cqie.dto.dataAsset.DataAssetDto;
 import com.cqie.entity.DataAsset;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,4 +14,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface DataAssetService extends IService<DataAsset> {
 
+    /**
+     * 新增资产表
+     */
+    Object addStandard(DataAssetDto dataAssetDto);
 }

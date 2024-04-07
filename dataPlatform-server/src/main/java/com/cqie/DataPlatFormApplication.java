@@ -3,6 +3,7 @@ package com.cqie;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * @program: dataPlatform
@@ -12,6 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  **/
 @SpringBootApplication
 @MapperScan("com.cqie.mapper")
+@EnableTransactionManagement //开启注解方式的事务管理
 public class DataPlatFormApplication {
     public static void main(String[] args) {
         SpringApplication.run(DataPlatFormApplication.class, args);

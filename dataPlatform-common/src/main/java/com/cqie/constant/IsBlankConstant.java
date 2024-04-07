@@ -8,9 +8,9 @@ package com.cqie.constant;
  **/
 
 public class IsBlankConstant {
-    public static final int CAN_EMPTY_CODE = 0;
+    public static final int CAN_EMPTY_CODE = 1;
 
-    public static final int NOT_CAN_EMPTY_CODE = 1;
+    public static final int NOT_CAN_EMPTY_CODE = 0;
 
     public static final String CAN_EMPTY_CN = "可为空";
 

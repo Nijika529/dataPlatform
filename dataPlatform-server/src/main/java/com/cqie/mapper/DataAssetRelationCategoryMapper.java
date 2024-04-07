@@ -2,6 +2,7 @@ package com.cqie.mapper;
 
 import com.cqie.entity.DataAssetRelationCategory;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * <p>
@@ -13,4 +14,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface DataAssetRelationCategoryMapper extends BaseMapper<DataAssetRelationCategory> {
 
+    @Select("select data_asset_code from data_asset_relation_category where category_code = #{categoryCode}")
+    int selectByIdAsset(Integer categoryCode);
 }

@@ -1,5 +1,6 @@
 package com.cqie.service.Impl;
 
+import com.cqie.dto.dataAsset.DataAssetDto;
 import com.cqie.entity.DataAsset;
 import com.cqie.mapper.DataAssetMapper;
 import com.cqie.service.DataAssetService;
@@ -17,4 +18,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class DataAssetServiceImpl extends ServiceImpl<DataAssetMapper, DataAsset> implements DataAssetService {
 
+
+    /**
+     * 新增资产表
+     */
+    @Override
+    public Object addStandard(DataAssetDto dataAssetDto) {
+        //中文名称和英文名称不能重复
+
+        //中文名称和英文名称
+
+        //中英文字段不能重复
+
+        //中英文字段与数据库不能重复
+
+        //存入数据库
+
+        return null;
+    }
 }

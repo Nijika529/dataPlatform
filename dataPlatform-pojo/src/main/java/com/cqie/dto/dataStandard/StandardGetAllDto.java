@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 @Data
 public class StandardGetAllDto implements Serializable {
 
-
     @ApiModelProperty("标准编号")
     private String dataStandardCode;
 

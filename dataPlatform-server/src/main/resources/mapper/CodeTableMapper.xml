@@ -25,6 +25,7 @@
     <select id="selectTableList" resultType="com.cqie.vo.codetablevo.CodeTableValueVo">
         select id,code_table_name,code_table_desc
         from code_table
+        where delete_flag = 0 and code_table_state != 2
     </select>
 
     <select id="selectDataStandard" resultType="com.cqie.vo.codetablevo.CodeTableValueVo">

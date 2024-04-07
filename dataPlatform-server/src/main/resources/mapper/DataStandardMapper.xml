@@ -5,6 +5,7 @@
     <select id="page" resultType="com.cqie.vo.dataStandard.DataStandardPageVO">
         select *
         from data_standard
+        ${ew.customSqlSegment}
     </select>
 
     <insert id="insertForeach">

@@ -2,6 +2,9 @@ package com.cqie.mapper;
 
 import com.cqie.entity.CategoryInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface CategoryInfoMapper extends BaseMapper<CategoryInfo> {
 
+    @Select("select * FROM category_info WHERE parent_code = #{parentCode}")
+    List<CategoryInfo> selectChildrenByParentCode(Integer categoryCode);
 }

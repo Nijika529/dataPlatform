@@ -348,7 +348,7 @@ public class CodeTableServiceImpl<T,K> extends ServiceImpl<CodeTableMapper, Code
         //返回
         return Result.success(null);
     }
-    //获取所有码表
+    //获取未停用和逻辑删除的所有码表
     @Override
     public Result<Object> selectAllTable() {
         List<CodeTableValueVo> codeTables = codeTableMapper.selectTableList();
